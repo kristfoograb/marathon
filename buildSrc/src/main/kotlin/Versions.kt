@@ -84,7 +84,7 @@ object Libraries {
     val scalr = "org.imgscalr:imgscalr-lib:${Versions.scalr}"
     val allure = "io.qameta.allure:allure-java-commons:${Versions.allure}"
     val allureEnvironment = "com.github.automatedowl:allure-environment-writer:${Versions.allureEnvironment}"
-    val koin = "org.koin:koin-core:${Versions.koin}"
+    val koin = "io.insert-koin:koin-core:${Versions.koin}"
 }
 
 object TestLibraries {

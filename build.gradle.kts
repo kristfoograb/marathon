@@ -2,6 +2,7 @@ import io.gitlab.arturbosch.detekt.extensions.DetektExtension
 
 buildscript {
     repositories {
+        mavenLocal()
         jcenter()
         mavenCentral()
         google()
@@ -15,26 +16,14 @@ buildscript {
 
 
 plugins {
-    id("io.gitlab.arturbosch.detekt") version "1.0.0.RC6-4"
-}
-
-configure<DetektExtension> {
-    debug = true
-    version = "1.0.0.RC6-4"
-    profile = "main"
-
-    profile("main", Action {
-        input = rootProject.projectDir.absolutePath
-        filters = ".*/resources/.*,.*/build/.*,.*/sample-app/.*"
-        config = "${rootProject.projectDir}/default-detekt-config.yml"
-        baseline = "${rootProject.projectDir}/reports/baseline.xml"
-    })
+    id("io.gitlab.arturbosch.detekt") version "1.0.0"
 }
 
 allprojects {
     group = "com.malinskiy.marathon"
 
     repositories {
+        mavenLocal()
         jcenter()
         mavenCentral()
         google()

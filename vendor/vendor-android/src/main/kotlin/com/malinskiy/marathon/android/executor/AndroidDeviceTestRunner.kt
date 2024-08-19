@@ -38,19 +38,31 @@ class AndroidDeviceTestRunner(private val device: AndroidDevice) {
         rawTestBatch: TestBatch,
         listener: ITestRunListener
     ) {
+        val ignoredTests = rawTestBatch.tests.filter {
+            it.metaProperties.any {
+                metaProperty -> metaProperty.name == JUNIT_IGNORE_META_PROPERY.name
+            }
+        }
+        val ignoredTestsArray = ignoredTests.map {
+            "${it.pkg}.${it.clazz}#${it.method}"
+        }.toTypedArray()
+        logger.debug { "ignored tests = ${ignoredTestsArray.toList()}" }
 
-        val ignoredTests = rawTestBatch.tests.filter { it.metaProperties.contains(JUNIT_IGNORE_META_PROPERY) }
         val testBatch = TestBatch(rawTestBatch.tests - ignoredTests)
 
         val androidConfiguration = configuration.vendorConfiguration as AndroidConfiguration
         val info = ApkParser().parseInstrumentationInfo(androidConfiguration.testApplicationOutput)
         val runner = prepareTestRunner(configuration, androidConfiguration, info, testBatch)
 
-
         try {
             clearData(androidConfiguration, info)
             notifyIgnoredTest(ignoredTests, listener)
-            runner.run(listener)
+            if(testBatch.tests.size != 0) {
+                runner.run(listener)
+            } else {
+                listener.testRunStarted("", 0)
+                listener.testRunEnded(0, emptyMap())
+            }
         } catch (e: ShellCommandUnresponsiveException) {
             logger.warn(ERROR_STUCK)
             listener.testRunFailed(ERROR_STUCK)
